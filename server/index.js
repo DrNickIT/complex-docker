@@ -1,20 +1,24 @@
 const keys = require('./keys');
-const redis = require('redis');
 
-const redisClient = redis.createClient({
-    host: keys.redisHost,
-    port: keys.redisPort,
-    retry_strategy: () => 1000
-})
+// Express App Setup
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-const sub = redisClient.duplicate();
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
 
-function fib(index) {
-    if (index <2) return 1;
-    return fib(index-1) + fib(index -2);
-}
-
-sub.on('message', (channel, message) => {
-    redisClient.hset('values', message, fib(parseInt(message)));
+// Postgress Client setup
+const {Pool} = require('pg');
+const pgClient = new Pool({
+    user: keys.pgUser,
+    host: keys.pgHost,
+    database: keys.pgDatabase,
+    password: keys.pgPassword,
+    port: keys.pgPort
 });
-sub.subscribe('insert');
+pgClient.on('error', () => console.log('Losg PG Connection'));
+
+pgClient.query('CREATE TABLE IF NOT EXISTS values (number INT)')
+    .catch((err) => console.log(err));
