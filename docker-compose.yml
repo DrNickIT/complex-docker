@@ -4,7 +4,7 @@ services:
     image: 'postgres:latest'
   my-redis:
     image: 'redis:latest'
-  server:
+  fib-server:
     build:
       dockerfile: profiles/dev/Dockerfile
       context: ./server
@@ -19,3 +19,19 @@ services:
       - PGDATABASE=postgres
       - PGPASSWORD=postgres_password
       - PGPORT=5432
+  fib-client:
+    build:
+      dockerfile: profiles/dev/Dockerfile
+      context: ./client
+    ports:
+      volumes:
+        - /app/node_modules
+        - ./client:/app
+  fib-worker:
+    build:
+      dockerfile: profiles/dev/Dockerfile
+      context: ./worker
+    ports:
+      volumes:
+        - /app/node_modules
+        - ./worker:/app
