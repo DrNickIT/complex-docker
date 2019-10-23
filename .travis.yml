@@ -1,0 +1,10 @@
+#language: generic
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t drnickit/react-test -f ./client/profiles//dev/Dockerfile ./client
+
+script:
+  - docker run -e CI=true drnickit/react-test npm run test
