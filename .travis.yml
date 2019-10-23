@@ -14,3 +14,10 @@ after_success:
   - docker build -t drnickit/multi-nginx -f ./nginx/profiles/prod/Dockerfile ./client
   - docker build -t drnickit/multi-server -f ./server/profiles/prod/Dockerfile ./server
   - docker build -t drnickit/multi-worker -f ./worker/profiles/prod/Dockerfile ./worker
+  # Login to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker
+  - docker push drnickit/multi-client
+  - docker push drnickit/multi-nginx
+  - docker push drnickit/multi-server
+  - docker push drnickit/multi-worker
