@@ -1,8 +1,8 @@
 version: '3'
 services:
-  postgres:
+  my-postgres:
     image: 'postgres:latest'
-  redis:
+  my-redis:
     image: 'redis:latest'
   server:
     build:
@@ -11,3 +11,11 @@ services:
     volumes:
       - /app/node_modules
       - ./server:/app
+    environment:
+      - REDIS_HOST=my-redis
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=my-postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
