@@ -4,7 +4,13 @@ services:
   - docker
 
 before_install:
-  - docker build -t drnickit/react-test -f ./client/profiles//dev/Dockerfile ./client
+  - docker build -t drnickit/react-test -f ./client/profiles/dev/Dockerfile ./client
 
 script:
   - docker run -e CI=true drnickit/react-test npm run test
+
+after_success:
+  - docker build -t drnickit/multi-client -f ./client/profiles/prod/Dockerfile ./client
+  - docker build -t drnickit/multi-nginx -f ./nginx/profiles/prod/Dockerfile ./client
+  - docker build -t drnickit/multi-server -f ./server/profiles/prod/Dockerfile ./server
+  - docker build -t drnickit/multi-worker -f ./worker/profiles/prod/Dockerfile ./worker
