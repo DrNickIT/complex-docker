@@ -11,6 +11,8 @@ services:
     volumes:
       - /app/node_modules
       - ./server:/app
+    depends_on:
+      - my-postgres
     environment:
       - REDIS_HOST=my-redis
       - REDIS_PORT=6379
@@ -23,15 +25,23 @@ services:
     build:
       dockerfile: profiles/dev/Dockerfile
       context: ./client
-    ports:
-      volumes:
-        - /app/node_modules
-        - ./client:/app
-  fib-worker:
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+  worker:
     build:
       dockerfile: profiles/dev/Dockerfile
       context: ./worker
+    environment:
+      - REDIS_HOST=my-redis
+      - REDIS_PORT=6379
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
+  router:
+    restart: always
+    build:
+      dockerfile: profiles/dev/Dockerfile
+      context: ./nginx
     ports:
-      volumes:
-        - /app/node_modules
-        - ./worker:/app
+      - '3050:80'
