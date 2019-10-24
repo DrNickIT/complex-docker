@@ -1,4 +1,3 @@
-#language: generic
 sudo: required
 services:
   - docker
@@ -16,8 +15,21 @@ after_success:
   - docker build -t drnickit/multi-worker -f ./worker/profiles/prod/Dockerfile ./worker
   # Login to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # Take those images and push them to docker
+  # Take those images and push them to docker hub
   - docker push drnickit/multi-client
   - docker push drnickit/multi-nginx
   - docker push drnickit/multi-server
   - docker push drnickit/multi-worker
+
+#deploy:
+#  provider: elasticbeanstalk
+#  region: us-west-1
+#  app: multi-docker
+#  env: MultiDocker-env
+#  bucket_name: elasticbeanstalk-us-west-1-306476627547
+#  bucket_path: docker-multi
+#  on:
+#    branch: master
+#  access_key_id: $AWS_ACCESS_KEY
+#  secret_access_key:
+#    secure: $AWS_SECRET_KEY
